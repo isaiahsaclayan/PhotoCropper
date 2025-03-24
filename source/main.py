@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QApplication
-from PhotoCropperApp import PhotoCropperApp
+from PhotoCropper.PhotoCropperApp import PhotoCropperApp
 from qt_material import apply_stylesheet
 
 if __name__ == "__main__":
