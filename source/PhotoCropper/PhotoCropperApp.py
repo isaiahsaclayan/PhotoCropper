@@ -38,7 +38,7 @@ class PhotoCropperApp(QWidget):
         layout.addWidget(self.output_label, 4, 0, 1, 2)
 
         self.crop_button = QPushButton("Crop Images")
-        self.crop_button.clicked.connect(self.crop_images)
+        self.crop_button.clicked.connect(self.process_images)
         layout.addWidget(self.crop_button, 5, 0, 1, 2)
 
         self.setLayout(layout)
@@ -55,42 +55,47 @@ class PhotoCropperApp(QWidget):
         if path:
             self.output_dir = path
             self.output_label.setText(f"Output Directory: {self.output_dir}")
-            self.status_label.setText("Ready crop images")
+            self.status_label.setText("Ready to crop images")
 
-    def crop_images(self):
-        if not self.input_dir or not self.output_dir:
-            print("Please select both source and destination directories.")
-            return
-
-        if not os.path.exists(self.output_dir):
-            os.makedirs(self.output_dir)
-
-        for file in os.listdir(self.input_dir):
-            if file.endswith(('.png', '.jpg', '.jpeg')):
-                input_path = os.path.join(self.input_dir, file)
-                output_path = os.path.join(self.output_dir, file)
-
-                self.process_image(input_path, output_path)
-
-        self.status_label.setText("Cropping completed. Check output directory.")
-        self.status_label.setStyleSheet("font-size: 16px; color: green;")
-
-    def process_image(self, image_path, output_path):
+    def auto_crop(self, image_path, output_path):
         image = cv2.imread(image_path)
         if image is None:
             print(f"Error: Could not read {image_path}")
             return
 
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        _, thresh = cv2.threshold(gray, 240, 255, cv2.THRESH_BINARY)
+        blur = cv2.GaussianBlur(gray, (5, 5), 0)
+        _, thresh = cv2.threshold(blur, 240, 255, cv2.THRESH_BINARY_INV)
 
         contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         if contours:
             largest_contour = max(contours, key=cv2.contourArea)
             x, y, w, h = cv2.boundingRect(largest_contour)
+            padding = 10
+            x = max(x - padding, 0)
+            y = max(y - padding, 0)
+            w = min(w + 2 * padding, image.shape[1] - x)
+            h = min(h + 2 * padding, image.shape[0] - y)
             cropped_image = image[y:y + h, x:x + w]
             cv2.imwrite(output_path, cropped_image)
             print(f"Cropped image saved: {output_path}")
         else:
             print(f"No significant content found in {image_path}")
+
+    def process_images(self):
+        if not self.input_dir or not self.output_dir:
+            print("Please select both input and output folders.")
+            return
+
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
+
+        for filename in os.listdir(self.input_dir):
+            if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
+                input_path = os.path.join(self.input_dir, filename)
+                output_path = os.path.join(self.output_dir, filename)
+                self.auto_crop(input_path, output_path)
+
+        self.status_label.setText("Cropping complete!")
+        self.status_label.setStyleSheet("font-size: 16px; color: green;")
