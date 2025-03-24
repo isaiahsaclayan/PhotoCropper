@@ -1,4 +1,5 @@
 import os
+import sys
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QIcon
 from PhotoCropper.PhotoCropperApp import PhotoCropperApp
@@ -13,4 +14,4 @@ if __name__ == "__main__":
     apply_stylesheet(app, theme='dark_amber.xml')
     window.show()
 
-    app.exec()
+    sys.exit(app.exec())
