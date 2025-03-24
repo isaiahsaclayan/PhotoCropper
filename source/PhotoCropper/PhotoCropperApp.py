@@ -29,6 +29,7 @@ class PhotoCropperApp(QWidget):
         layout.addWidget(self.input_button, 1, 0)
 
         self.output_button = QPushButton("Select Destination Directory")
+        self.output_button.setEnabled(False)
         self.output_button.clicked.connect(self.open_output_file_dialog)
         layout.addWidget(self.output_button, 1, 1)
 
@@ -40,6 +41,7 @@ class PhotoCropperApp(QWidget):
 
         self.crop_button = QPushButton("Crop Images")
         self.crop_button.clicked.connect(self.process_images)
+        self.crop_button.setEnabled(False)
         layout.addWidget(self.crop_button, 5, 0, 1, 2)
 
         self.setLayout(layout)
@@ -50,6 +52,7 @@ class PhotoCropperApp(QWidget):
             self.input_dir = path
             self.input_label.setText(f"Input Directory: {self.input_dir}")
             self.status_label.setText("Select destination directory")
+            self.output_button.setEnabled(True)
 
     def open_output_file_dialog(self):
         path = QFileDialog.getExistingDirectory(self, "Select Destination Directory", "")
@@ -57,6 +60,7 @@ class PhotoCropperApp(QWidget):
             self.output_dir = path
             self.output_label.setText(f"Output Directory: {self.output_dir}")
             self.status_label.setText("Ready to crop images")
+            self.crop_button.setEnabled(True)
 
     def auto_crop(self, image_path, output_path):
         image = cv2.imread(image_path)
