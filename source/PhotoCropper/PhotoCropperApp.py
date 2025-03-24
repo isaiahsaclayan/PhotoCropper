@@ -1,8 +1,9 @@
-import os.path
+import os
 import cv2
 import subprocess
 from PyQt6.QtWidgets import QWidget, QPushButton, QFileDialog, QLabel, QGridLayout
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QIcon
 
 class PhotoCropperApp(QWidget):
     def __init__(self):
@@ -14,8 +15,11 @@ class PhotoCropperApp(QWidget):
         self.initializeUI()
 
     def initializeUI(self):
-        self.setWindowTitle("Scan Cropper")
+        self.setWindowTitle("Auto Photo Cropper")
         self.setGeometry(100, 100, 400, 200)
+
+        icon_path = os.path.join(os.path.dirname(__file__), '../../resources/assets/icon.ico')
+        self.setWindowIcon(QIcon(icon_path))
 
         layout = QGridLayout()
 
