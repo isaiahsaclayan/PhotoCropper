@@ -1,8 +1,6 @@
 import os.path
-import sys
-import random
 import cv2
-from PyQt6.QtWidgets import QWidget, QPushButton, QFileDialog, QSpacerItem, QSizePolicy, QLabel, QGridLayout
+from PyQt6.QtWidgets import QWidget, QPushButton, QFileDialog, QLabel, QGridLayout
 from PyQt6.QtCore import Qt
 
 class PhotoCropperApp(QWidget):
@@ -40,6 +38,7 @@ class PhotoCropperApp(QWidget):
         layout.addWidget(self.output_label, 4, 0, 1, 2)
 
         self.crop_button = QPushButton("Crop Images")
+        self.crop_button.clicked.connect(self.crop_images)
         layout.addWidget(self.crop_button, 5, 0, 1, 2)
 
         self.setLayout(layout)
@@ -56,6 +55,7 @@ class PhotoCropperApp(QWidget):
         if path:
             self.output_dir = path
             self.output_label.setText(f"Output Directory: {self.output_dir}")
+            self.status_label.setText("Ready crop images")
 
     def crop_images(self):
         if not self.input_dir or not self.output_dir:
@@ -71,6 +71,9 @@ class PhotoCropperApp(QWidget):
                 output_path = os.path.join(self.output_dir, file)
 
                 self.process_image(input_path, output_path)
+
+        self.status_label.setText("Cropping completed. Check output directory.")
+        self.status_label.setStyleSheet("font-size: 16px; color: green;")
 
     def process_image(self, image_path, output_path):
         image = cv2.imread(image_path)
