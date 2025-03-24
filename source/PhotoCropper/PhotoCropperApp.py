@@ -1,5 +1,6 @@
 import os.path
 import cv2
+import subprocess
 from PyQt6.QtWidgets import QWidget, QPushButton, QFileDialog, QLabel, QGridLayout
 from PyQt6.QtCore import Qt
 
@@ -99,3 +100,12 @@ class PhotoCropperApp(QWidget):
 
         self.status_label.setText("Cropping complete!")
         self.status_label.setStyleSheet("font-size: 16px; color: green;")
+
+        self.open_output_folder()
+
+    def open_output_folder(self):
+        if self.output_dir:
+            if os.name == 'nt':
+                os.startfile(self.output_dir)
+            elif os.name == 'posix':
+                subprocess.run(['xdg-open', self.output_dir])
