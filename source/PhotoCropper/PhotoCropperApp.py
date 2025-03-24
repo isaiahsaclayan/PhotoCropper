@@ -103,7 +103,7 @@ class PhotoCropperApp(QWidget):
         for filename in os.listdir(self.input_dir):
             if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
                 input_path = os.path.join(self.input_dir, filename)
-                output_path = os.path.join(self.output_dir, filename + "_cropped.jpg")
+                output_path = os.path.join(self.output_dir, "cropped_" + filename)
                 self.auto_crop(input_path, output_path)
 
         self.status_label.setText("Cropping complete!")
