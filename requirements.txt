@@ -2,3 +2,4 @@ PyQt6
 numpy
 opencv-python
 qt-material
+pyinstaller
